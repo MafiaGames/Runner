@@ -8,7 +8,9 @@ public class Score : MonoBehaviour {
     private int maxDifficultylevel = 10;
     private int scoreToNext = 10;
     public Text scoreText;
+    public GameObject DeathMenu;
     private bool isDead =false;
+    public DeathMenu dm;
 	// Use this for initialization
 	void Start () {
         
@@ -31,6 +33,9 @@ public class Score : MonoBehaviour {
     }
     public void OnDeath()
     {
+        if(PlayerPrefs.GetFloat("Highscore")<score)
+            PlayerPrefs.SetFloat("Highscore",score);
+        dm.ToggleMenu(score);
         isDead = true;
     }
 }

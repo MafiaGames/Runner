@@ -5,7 +5,7 @@ public class TileManager : MonoBehaviour {
     public GameObject[] tilePrefabs;
     private Transform playerTransform;
     private float spawnZ = 0.0f;
-    private float tileLength = 5.47f;
+    private float tileLength = 5.5f;
     private int amnTilesOnScreen = 7;
     private float safeZone = 6.0f;
     private List<GameObject> activeTiles;
@@ -16,7 +16,7 @@ public class TileManager : MonoBehaviour {
         playerTransform = GameObject.FindGameObjectWithTag("Player").transform;
         for(int i=0;i<amnTilesOnScreen;i++)
         {
-            if (i < 2) SpawnTiles(0);
+            if (i < 3) SpawnTiles(0);
             else SpawnTiles();
            
         }
@@ -53,7 +53,6 @@ public class TileManager : MonoBehaviour {
             go = Instantiate(tilePrefabs[RandomIndex()]) as GameObject;
         else
             go = Instantiate(tilePrefabs[prefabIndex]) as GameObject;
-      
         go.transform.SetParent(transform);
         go.transform.position = Vector3.forward * spawnZ;
         spawnZ += tileLength;

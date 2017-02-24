@@ -2,6 +2,8 @@
 using System.Collections;
 
 public class Runner : MonoBehaviour {
+    AudioSource audio;
+    public AudioClip BkMusic;
     CharacterController ch;
     Animator anim;
     AnimationState an;
@@ -9,21 +11,56 @@ public class Runner : MonoBehaviour {
     float jumpForce = 20.0f;
     float gravity = 30f;
     private bool isDead = false;
+    Vector3 pos = Vector3.zero;
     Vector3 direction = Vector3.zero;
   // public GameObject Fmodel;
 	// Use this for initialization
 	void Start () {
         ch = GetComponent<CharacterController>();
         anim = GetComponent<Animator>();
+        audio = GetComponent<AudioSource>();
         // cam = GetComponent<Camera>();
-        
+        audio.Play();
 
     }
-	
+    void Swipe()
+    {
+       
+        Vector2 delta = Input.GetTouch(0).deltaPosition;
+        if (Mathf.Abs(delta.x)>Mathf.Abs(delta.y))
+        {
+             pos = transform.position;
+            pos.x = delta.x * speed;
+            pos.z = speed;
+        }
+        else
+        {
+            if (ch.isGrounded)
+            {
+                if (delta.y>0)
+                {
+                    pos.y = jumpForce;
+                    anim.SetBool("jump", true);
+                    Invoke("StopJump", 0.1f);
+                }
+                else
+                {
+                    // direction.y = jumpForce;
+                    anim.SetBool("slide", true);
+                    Invoke("StopJumpOver", 0.1f);
+                }
+
+
+            }
+            pos.y -= gravity * Time.deltaTime;
+            ch.Move(pos * Time.deltaTime);
+        }
+    }
 	// Update is called once per frame
 	void Update () {
-
+        
         if (isDead) return;
+        if (Input.touchCount > 0) Swipe();
             direction = Vector3.zero;
 
             direction.x = Input.GetAxisRaw("Horizontal") * speed;
@@ -63,10 +100,20 @@ public class Runner : MonoBehaviour {
     {
         speed += modifier;
     }
-    private void OnControllerColliderHit(ControllerColliderHit hit)
+    void OnControllerColliderHit(ControllerColliderHit hit)
     {
-        if (hit.point.z > transform.position.z + ch.radius)
+        if (hit.gameObject.tag == "Finish")
         {
+            Debug.Log("Hit Player");
+            Death();
+        }
+    }
+    
+    void OnCollision(Collision collision)
+    {
+        if (collision.gameObject.tag == "Finish")
+        {
+            Debug.Log("Hit Player");
             Death();
         }
     }
@@ -75,4 +122,5 @@ public class Runner : MonoBehaviour {
         isDead = true;
         GetComponent<Score>().OnDeath();
     }
+    
 }
