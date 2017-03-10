@@ -5,7 +5,9 @@ public class Runner : MonoBehaviour {
     AudioSource audio;
     private float fingerStartTime = 0.0f;
     private Vector2 fingerStartPos = Vector2.zero;
-
+    public Transform center;
+    public Transform left;
+    public Transform right;
     private bool isSwipe = false;
     private float minSwipeDist = 50.0f;
     private float maxSwipeTime = 0.5f;
@@ -13,58 +15,30 @@ public class Runner : MonoBehaviour {
     CharacterController ch;
     Animator anim;
     AnimationState an;
+    //private BoxCollider Floor;
     float speed = 10f;
-    float jumpForce = 8.0f;
+    float jumpForce = 10.0f;
     float gravity = 30f;
     private bool isDead = false;
     Vector3 pos = Vector3.zero;
     Vector3 direction = Vector3.zero;
+    Score sc;
   // public GameObject Fmodel;
 	// Use this for initialization
 	void Start () {
         ch = GetComponent<CharacterController>();
         anim = GetComponent<Animator>();
         audio = GetComponent<AudioSource>();
+       // Floor = GetComponent<BoxCollider>();
         // cam = GetComponent<Camera>();
+      //  Debug.Log(Floor.bounds.size.x);
         audio.Play();
 
     }
-    void Swipe()
-    {
-       
-        Vector2 delta = Input.GetTouch(0).deltaPosition;
-        if (Mathf.Abs(delta.x)>Mathf.Abs(delta.y))
-        {
-             pos = transform.position;
-            pos.x = delta.x * speed;
-           
-        }
-        else
-        {
-            if (ch.isGrounded)
-            {
-                if (delta.y>0)
-                {
-                    pos.y = jumpForce;
-                    anim.SetBool("jump", true);
-                    Invoke("StopJump", 0.1f);
-                }
-                else
-                {
-                    // direction.y = jumpForce;
-                    anim.SetBool("slide", true);
-                    Invoke("StopJumpOver", 0.1f);
-                }
-
-
-            }
-           
-            //ch.Move(pos * Time.deltaTime);
-        }
-    }
+  
 	// Update is called once per frame
 	void Update () {
-        
+       
         if (isDead) return;
         pos.z = speed;
         if (Input.touchCount > 0)
@@ -109,16 +83,16 @@ public class Runner : MonoBehaviour {
 
                             if (swipeType.x != 0.0f)
                             {
-                                if (swipeType.x > 0.0f)
-                                {
-                                    // MOVE RIGHT
-                                    pos = swipeType * speed;
-                                }
-                                else
-                                {
-                                    // MOVE LEFT
-                                    pos = swipeType * speed ;
-                                }
+                                //if (swipeType.x > 0.0f)
+                                //{
+                                //    // MOVE RIGHT
+                                //    pos = swipeType * speed;
+                                //}
+                                //else
+                                //{
+                                //    // MOVE LEFT
+                                //    pos = swipeType * speed;
+                                //}
                             }
                             if (ch.isGrounded)
                             {
@@ -146,42 +120,46 @@ public class Runner : MonoBehaviour {
                 }
             }
         }
+       pos.x = Input.GetAxisRaw("Mouse X")*0.9f;
+        Debug.Log(pos.x);
+        /* direction = Vector3.zero;
 
-        /*   direction = Vector3.zero;
+          direction.x = Input.GetAxisRaw("Horizontal") * speed;
+            direction.z = speed;
+*/
+         if (ch.isGrounded)
+         {
+             if (Input.GetKeyDown(KeyCode.Space))
+             {
+                 pos.y = jumpForce; ch.height = 0.5f;
+                anim.SetBool("jump", true); 
+                Invoke("StopJump", 0.1f);
+             }
+             if (Input.GetKeyDown(KeyCode.LeftShift))
+             {
+                // direction.y = jumpForce;
+                 anim.SetBool("slide", true); ch.height = 1f;
+                 Invoke("StopJumpOver", 0.1f);
+        
+             }
 
-           direction.x = Input.GetAxisRaw("Horizontal") * speed;
-           direction.z = speed;
 
-       if (ch.isGrounded)
-       {
-           if (Input.GetKeyDown(KeyCode.Space))
-           {
-               direction.y = jumpForce;
-               anim.SetBool("jump", true);
-               Invoke("StopJump", 0.1f);
-           }
-           if (Input.GetKeyDown(KeyCode.LeftShift))
-           {
-              // direction.y = jumpForce;
-               anim.SetBool("slide", true);
-               Invoke("StopJumpOver", 0.1f);
-           }
-
-
-       }*/
-        // direction.y -= gravity * Time.deltaTime;
+         }/*
+           direction.y -= gravity * Time.deltaTime;*/
         pos.y -= gravity * Time.deltaTime;
+       
         ch.Move(pos * Time.deltaTime);
         
     }
     void StopJump()
     {
         anim.SetBool("jump", false);
-      
+        ch.height = 1.6f;
     }
     void StopJumpOver()
     {
         anim.SetBool("slide", false);
+        ch.height = 1.6f;
     }
     public void SetSpeed(float modifier)
     {
@@ -209,5 +187,6 @@ public class Runner : MonoBehaviour {
         isDead = true;
         GetComponent<Score>().OnDeath();
     }
-    
+
+
 }

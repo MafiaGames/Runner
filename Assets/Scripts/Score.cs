@@ -18,6 +18,7 @@ public class Score : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
+       
         if (isDead) return;
         if (score >= scoreToNext) { LevelUp(); }
         score += Time.deltaTime;

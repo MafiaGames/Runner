@@ -6,14 +6,18 @@ public class TileManager : MonoBehaviour {
     private Transform playerTransform;
     private float spawnZ = 0.0f;
     private float tileLength = 5.5f;
-    private int amnTilesOnScreen = 7;
+    private int amnTilesOnScreen = 9;
     private float safeZone = 6.0f;
     private List<GameObject> activeTiles;
     private int lastIndex = 0;
+    Score sc;
+    DeathMenu dm;
+    bool endGame=false;
 	// Use this for initialization
 	void Start () {
         activeTiles = new List<GameObject>();
         playerTransform = GameObject.FindGameObjectWithTag("Player").transform;
+       
         for(int i=0;i<amnTilesOnScreen;i++)
         {
             if (i < 3) SpawnTiles(0);
@@ -24,6 +28,8 @@ public class TileManager : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
+       // if (int.Parse(sc.scoreText.text) == 20) { SpawnTiles(tilePrefabs.Length); }
+       
         if (playerTransform.position.z-safeZone>(spawnZ-amnTilesOnScreen*tileLength))
         {
             SpawnTiles();
@@ -41,7 +47,7 @@ public class TileManager : MonoBehaviour {
         int randomIndex = lastIndex;
         while(randomIndex == lastIndex)
         {
-            randomIndex = Random.Range(0,tilePrefabs.Length);
+            randomIndex = Random.Range(0,tilePrefabs.Length-1);
         }
         lastIndex = randomIndex;
         return randomIndex;
