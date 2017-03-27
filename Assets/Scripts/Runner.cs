@@ -131,14 +131,16 @@ public class Runner : MonoBehaviour {
          {
              if (Input.GetKeyDown(KeyCode.Space))
              {
-                 pos.y = jumpForce; ch.height = 0.5f;
+                ch.height = 0.5f;
+                pos.y = jumpForce; 
                 anim.SetBool("jump", true); 
                 Invoke("StopJump", 0.1f);
              }
              if (Input.GetKeyDown(KeyCode.LeftShift))
              {
                 // direction.y = jumpForce;
-                 anim.SetBool("slide", true); ch.height = 1f;
+                ch.height = 1f;
+                anim.SetBool("slide", true);
                  Invoke("StopJumpOver", 0.1f);
         
              }
@@ -153,13 +155,15 @@ public class Runner : MonoBehaviour {
     }
     void StopJump()
     {
-        anim.SetBool("jump", false);
         ch.height = 1.6f;
+        anim.SetBool("jump", false);
+       
     }
     void StopJumpOver()
     {
-        anim.SetBool("slide", false);
         ch.height = 1.6f;
+        anim.SetBool("slide", false);
+        
     }
     public void SetSpeed(float modifier)
     {
