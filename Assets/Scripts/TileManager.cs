@@ -1,7 +1,9 @@
 ﻿using UnityEngine;
 using System.Collections;
+using UnityEngine.UI;
 using System.Collections.Generic;
 public class TileManager : MonoBehaviour {
+    public Text Score;
     public GameObject[] tilePrefabs;
     private Transform playerTransform;
     private float spawnZ = 0.0f;
@@ -11,13 +13,15 @@ public class TileManager : MonoBehaviour {
     private List<GameObject> activeTiles;
     private int lastIndex = 0;
     Score sc;
+   
     DeathMenu dm;
     bool endGame=false;
+    int score;
 	// Use this for initialization
 	void Start () {
         activeTiles = new List<GameObject>();
         playerTransform = GameObject.FindGameObjectWithTag("Player").transform;
-       
+        sc = new Score();
         for(int i=0;i<amnTilesOnScreen;i++)
         {
             if (i < 3) SpawnTiles(0);
@@ -28,8 +32,9 @@ public class TileManager : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-       // if (int.Parse(sc.scoreText.text) == 20) { SpawnTiles(tilePrefabs.Length); }
-       
+
+
+        score = int.Parse(Score.text);
         if (playerTransform.position.z-safeZone>(spawnZ-amnTilesOnScreen*tileLength))
         {
             SpawnTiles();
@@ -43,12 +48,18 @@ public class TileManager : MonoBehaviour {
     }
     private int RandomIndex()
     {
+
         if (tilePrefabs.Length<=1) { return 0; }
         int randomIndex = lastIndex;
-        while(randomIndex == lastIndex)
-        {
-            randomIndex = Random.Range(0,tilePrefabs.Length-1);
-        }
+      
+            while (randomIndex == lastIndex)
+            {
+            if (score < 20)
+                randomIndex = Random.Range(0, tilePrefabs.Length - 3);
+            else
+                randomIndex = Random.Range(0,tilePrefabs.Length-1);
+            }
+       
         lastIndex = randomIndex;
         return randomIndex;
     }

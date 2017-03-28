@@ -17,6 +17,10 @@ public class Score : MonoBehaviour {
 	}
 	
 	// Update is called once per frame
+    public int getScore()
+    {
+        return (int)score;
+    }
 	void Update () {
        
         if (isDead) return;
