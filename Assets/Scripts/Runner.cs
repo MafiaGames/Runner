@@ -2,14 +2,15 @@
 using System.Collections;
 
 public class Runner : MonoBehaviour {
-    AudioSource audio;
+    
+    
     private float fingerStartTime = 0.0f;
     private Vector2 fingerStartPos = Vector2.zero;
     public Transform center;
     public Transform left;
     public Transform right;
     private bool isSwipe = false;
-    private float minSwipeDist = 50.0f;
+    private float minSwipeDist = 10.0f;
     private float maxSwipeTime = 0.5f;
     public AudioClip BkMusic;
     CharacterController ch;
@@ -23,27 +24,15 @@ public class Runner : MonoBehaviour {
     Vector3 pos = Vector3.zero;
     Vector3 direction = Vector3.zero;
     Score sc;
-  // public GameObject Fmodel;
-	// Use this for initialization
-	void Start () {
+  	void Start () {
         ch = GetComponent<CharacterController>();
         anim = GetComponent<Animator>();
-        audio = GetComponent<AudioSource>();
-       // Floor = GetComponent<BoxCollider>();
-        // cam = GetComponent<Camera>();
-      //  Debug.Log(Floor.bounds.size.x);
-        audio.Play();
-
-    }
-  
-	// Update is called once per frame
-	void Update () {
-       
+   }  
+    void Update () {
         if (isDead) return;
-        pos.z = speed;
+
         if (Input.touchCount > 0)
         {
-
             foreach (Touch touch in Input.touches)
             {
                 switch (touch.phase)
@@ -83,17 +72,47 @@ public class Runner : MonoBehaviour {
 
                             if (swipeType.x != 0.0f)
                             {
-                                //if (swipeType.x > 0.0f)
-                                //{
-                                //    // MOVE RIGHT
-                                //    pos = swipeType * speed;
-                                //}
-                                //else
-                                //{
-                                //    // MOVE LEFT
-                                //    pos = swipeType * speed;
-                                //}
+                                if (swipeType.x > 0.0f)
+                                {
+
+                                    // MOVE RIGHT
+                                    if (transform.position.x < right.position.x && transform.position.x < center.position.x)
+                                    {
+                                        Vector3 rr = transform.position;
+                                        rr.x = center.position.x;
+                                        // transform.position = rr;
+                                        transform.position = Vector3.Lerp(transform.position, rr, 1);
+                                    }
+                                    else if (transform.position.x < right.position.x && transform.position.x >= center.position.x)
+                                    {
+                                        Vector3 rr = transform.position;
+                                        rr.x = right.position.x;
+                                        // transform.position = rr;
+                                        transform.position = Vector3.Lerp(transform.position, rr, 1);
+                                    }
+                                }
+                                else
+                                {
+
+                                    // MOVE LEFT
+                                    if (transform.position.x > left.position.x && transform.position.x > center.position.x)
+                                    {
+                                        Vector3 rr = transform.position;
+                                        rr.x = center.position.x;
+                                        transform.position = Vector3.Lerp(transform.position, rr, 1);
+                                    }
+                                    else if (transform.position.x > left.position.x && transform.position.x <= center.position.x)
+                                    {
+                                        Vector3 rr = transform.position;
+                                        rr.x = left.position.x;
+                                        // transform.position = rr;
+                                        transform.position = Vector3.Lerp(transform.position, rr, 1);
+                                    }
+
+                                }
+
                             }
+
                             if (ch.isGrounded)
                             {
                                 if (swipeType.y != 0.0f)
@@ -120,38 +139,12 @@ public class Runner : MonoBehaviour {
                 }
             }
         }
-       pos.x = Input.GetAxisRaw("Mouse X")*0.9f;
-        Debug.Log(pos.x);
-        /* direction = Vector3.zero;
-
-          direction.x = Input.GetAxisRaw("Horizontal") * speed;
-            direction.z = speed;
-*/
-         if (ch.isGrounded)
-         {
-             if (Input.GetKeyDown(KeyCode.Space))
-             {
-                ch.height = 0.5f;
-                pos.y = jumpForce; 
-                anim.SetBool("jump", true); 
-                Invoke("StopJump", 0.1f);
-             }
-             if (Input.GetKeyDown(KeyCode.LeftShift))
-             {
-                // direction.y = jumpForce;
-                ch.height = 1f;
-                anim.SetBool("slide", true);
-                 Invoke("StopJumpOver", 0.1f);
-        
-             }
-
-
-         }/*
-           direction.y -= gravity * Time.deltaTime;*/
+        //pos = Vector3.zero;
+        // pos.x = Input.GetAxisRaw("Horizontal")*speed;
+        pos.z = speed;
         pos.y -= gravity * Time.deltaTime;
-       
         ch.Move(pos * Time.deltaTime);
-        
+      
     }
     void StopJump()
     {
@@ -176,8 +169,12 @@ public class Runner : MonoBehaviour {
             Debug.Log("Hit Player");
             Death();
         }
-    }
-    
+        if(hit.gameObject.tag=="Coin")
+        {
+            Destroy(hit.gameObject);
+            GetComponent<Score>().AddScore();
+        }
+    }  
     void OnCollision(Collision collision)
     {
         if (collision.gameObject.tag == "Finish")
@@ -191,6 +188,4 @@ public class Runner : MonoBehaviour {
         isDead = true;
         GetComponent<Score>().OnDeath();
     }
-
-
 }

@@ -13,7 +13,7 @@ public class Score : MonoBehaviour {
     public DeathMenu dm;
 	// Use this for initialization
 	void Start () {
-        
+        scoreText.text = "0";
 	}
 	
 	// Update is called once per frame
@@ -23,10 +23,7 @@ public class Score : MonoBehaviour {
     }
 	void Update () {
        
-        if (isDead) return;
-        if (score >= scoreToNext) { LevelUp(); }
-        score += Time.deltaTime;
-        scoreText.text = ((int)score).ToString();
+        
 	}
 
     void LevelUp()
@@ -42,5 +39,12 @@ public class Score : MonoBehaviour {
             PlayerPrefs.SetFloat("Highscore",score);
         dm.ToggleMenu(score);
         isDead = true;
+    }
+    public void AddScore()
+    {
+        if (isDead) return;
+        if (score >= scoreToNext) { LevelUp(); }
+        score ++;
+        scoreText.text = ((int)score).ToString();
     }
 }
